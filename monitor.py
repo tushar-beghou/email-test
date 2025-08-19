@@ -44,10 +44,18 @@ def send_email(subject, body):
     except Exception as e:
         print(f"Email send failed: {e}")
 
+
 if __name__ == "__main__":
-    endpoint = "https://your-api.com/endpoint"
-    params = {"your": "payload"}
-    api_key = "your_api_key"
+    endpoint = "https://dev.bg-app-insights.com/v7"
+    params = {"list_messages": [{"role": "user", "content": "What is zanu?"}],
+            "date_filter":[{"start": "2020-01-01","end":"2025-12-31"}],
+            "allowed_data_sources":[],
+            "persona":"coba",
+            "therapeutic_area":"",
+            "username": "beghou",
+            "country": []
+            }
+    api_key = "abcdefgh"
 
     status, error = check_endpoint(endpoint, params, api_key)
 
