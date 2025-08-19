@@ -67,8 +67,5 @@ if __name__ == "__main__":
         )
     else:
         print("Check passed.")
-        send_email(
-            subject="✅ API Monitor Alert (PASSED)",
-            body="The API check passed with no errors."
-        )
+
 
