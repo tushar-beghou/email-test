@@ -1,0 +1,30 @@
+name: Scheduled Endpoint Monitor
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # every 30 minutes (UTC)
+  workflow_dispatch:
+
+jobs:
+  run-monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run monitor script
+      env:
+        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+        ALERT_TO_EMAIL: ${{ secrets.ALERT_TO_EMAIL }}
+        ALERT_FROM_EMAIL: ${{ secrets.ALERT_FROM_EMAIL }}
+      run: python monitor.py
+
