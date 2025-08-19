@@ -46,7 +46,7 @@ def send_email(subject, body):
 
 
 if __name__ == "__main__":
-    endpoint = "https://dev.bg-app-insights.com/v7"
+    endpoint = "https://dev.bg-app-insights.com/v10"
     params = {"list_messages": [{"role": "user", "content": "What is zanu?"}],
             "date_filter":[{"start": "2020-01-01","end":"2025-12-31"}],
             "allowed_data_sources":[],
