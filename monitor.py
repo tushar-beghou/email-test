@@ -9,16 +9,16 @@ def check_endpoint(endpoint, params, api_key):
     success = False
     error_message = ""
 
-    for i in range(3):
+    for _ in range(3):
         try:
             res = requests.get(endpoint, json=params, headers=headers)
 
-            if res.status_code != 200:
-                error_message = f"JSON STATUS CODE: {res.status_code}"
+            if res.text.strip().endswith(apology_message):
+                error_message = "Server Error"
                 continue
 
-            if res.text.strip() == apology_message:
-                error_message = "Server Error"
+            if res.status_code != 200:
+                error_message = f"JSON STATUS CODE: {res.status_code}"
                 continue
 
             success = True
@@ -44,28 +44,35 @@ def send_email(subject, body):
     except Exception as e:
         print(f"Email send failed: {e}")
 
-
 if __name__ == "__main__":
-    endpoint = "https://dev.bg-app-insights.com/v7"
-    params = {"list_messages": [{"role": "user", "content": "What is zanu?"}],
-            "date_filter":[{"start": "2020-01-01","end":"2025-12-31"}],
-            "allowed_data_sources":[],
-            "persona":"coba",
-            "therapeutic_area":"",
-            "username": "beghou",
-            "country": []
-            }
+    endpoints = {
+        "Dev v7": "https://dev.bg-app-insights.com/v7",
+        "UAT v7": "https://uat.bg-app-insights.com/v7",
+        "Prod v7": "https://prod.bg-app-insights.com/v7",
+        "Dev v8": "https://dev.bg-app-insights.com/v8",
+        "UAT v8": "https://uat.bg-app-insights.com/v8",
+        "Prod v8": "https://prod.bg-app-insights.com/v8"
+    }
+
+    params = {
+        "list_messages": [{"role": "user", "content": "What is zanu?"}],
+        "date_filter": [{"start": "2020-01-01", "end": "2025-12-31"}],
+        "allowed_data_sources": [],
+        "persona": "coba",
+        "therapeutic_area": "",
+        "username": "beghou",
+        "country": []
+    }
     api_key = "abcdefgh"
 
-    status, error = check_endpoint(endpoint, params, api_key)
+    for env_name, endpoint in endpoints.items():
+        status, error = check_endpoint(endpoint, params, api_key)
 
-    if status == "fail":
-        print(f"Check failed: {error}")
-        send_email(
-            subject="🚨 API Monitor Alert (FAILED)",
-            body=f"The API check failed.\nError: {error}"
-        )
-    else:
-        print("Check passed.")
-
-
+        if status == "fail":
+            print(f"[{env_name}] Check failed: {error}")
+            send_email(
+                subject=f"🚨 API Monitor Alert - {env_name} (FAILED)",
+                body=f"The {env_name} API check failed for endpoint {endpoint}.\n\nError: {error}"
+            )
+        else:
+            print(f"[{env_name}] Check passed.")

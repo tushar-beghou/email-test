@@ -1,0 +1,31 @@
+trigger: none
+
+schedules:
+  - cron: "0,30 * * * *"  # every 30 minutes
+    displayName: "Run every 30 mins"
+    branches:
+      include:
+        - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - checkout: self
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.10'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: python monitor.py
+    env:
+      API_KEY: $(API_KEY)
+      SENDGRID_API_KEY: $(SENDGRID_API_KEY)
+      ALERT_TO_EMAIL: $(ALERT_TO_EMAIL)
+      ALERT_FROM_EMAIL: $(ALERT_FROM_EMAIL)
+    displayName: 'Run API Monitor'
