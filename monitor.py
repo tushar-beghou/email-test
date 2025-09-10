@@ -54,6 +54,15 @@ if __name__ == "__main__":
         "Prod v8": "https://prod.bg-app-insights.com/v8"
     }
 
+    api_keys = {
+        "Dev v7": "abcdefgh",
+        "UAT v7": "t31VJnwkQ4GEC75D0j2YBxeEO",
+        "Prod v7": "IX6DUsnStDyre41lbTzQwViv8",
+        "Dev v8": "abcdefgh",
+        "UAT v8": "t31VJnwkQ4GEC75D0j2YBxeEO",
+        "Prod v8": "IX6DUsnStDyre41lbTzQwViv8"
+    }
+
     params = {
         "list_messages": [{"role": "user", "content": "What is zanu?"}],
         "date_filter": [{"start": "2020-01-01", "end": "2025-12-31"}],
@@ -63,16 +72,17 @@ if __name__ == "__main__":
         "username": "beghou",
         "country": []
     }
-    api_key = "abcdefgh"
+    # api_key = "abcdefgh"
 
     for env_name, endpoint in endpoints.items():
+        api_key = api_keys[env_name]
         status, error = check_endpoint(endpoint, params, api_key)
 
         if status == "fail":
             print(f"[{env_name}] Check failed: {error}")
             send_email(
-                subject=f"🚨 API Monitor Alert - {env_name} (FAILED)",
-                body=f"The {env_name} API check failed for endpoint {endpoint}.\n\nError: {error}"
+                subject=f"🚨 API Monitor Alert - {env_name} (DOWN)",
+                body=f"The {env_name} API check failed.\n\nError: {error}"
             )
         else:
             print(f"[{env_name}] Check passed.")
